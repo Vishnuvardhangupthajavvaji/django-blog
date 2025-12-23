@@ -26,3 +26,14 @@ def posts_by_category(request, category_id) :
     }
     # return HttpResponse(context)
     return render(request, 'posts_by_category.html', context)
+
+def blogs(request, slug) :
+    try :
+        blog = Blog.objects.get(slug=slug)
+    except :
+        blog = None
+    print(blog)
+    context = {
+        'blog' : blog,
+    }
+    return render(request, 'blogs.html', context)
