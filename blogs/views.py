@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Blog, Category
+from django.db.models import Q
 
 # Create your views here.
 
@@ -37,3 +38,14 @@ def blogs(request, slug) :
         'blog' : blog,
     }
     return render(request, 'blogs.html', context)
+
+def search(request) :
+    keyword = request.GET.get('keyword')
+    print(f"{keyword=}")
+    blogs = Blog.objects.filter(Q(title__icontains=keyword) | Q(blog_body__icontains=keyword) | Q(author__username__icontains=keyword), status='Published')
+    print(f"{blogs=}")
+    context = {
+        'blogs' : blogs,
+        'keyword' : keyword,
+    }
+    return render(request, 'search.html', context)
