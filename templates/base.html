@@ -33,7 +33,6 @@
               <a class="btn btn-sm btn-warning" href="{% url 'login' %}">Login</a> &nbsp;
               <a class="btn btn-sm btn-outline-secondary" href="{% url 'register' %}">Register</a>
             {% else %}
-            {{user}}
               {% if request.user.is_superuser or request.user.is_staff %}
               &nbsp;
               <span><a href="{% url 'dashboard' %}" class="text-dark btn btn-sm btn-primary">Dashboard</a></span>
