@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Blog, About, SocialMediaLink
+from .models import Category, Blog, About, SocialMediaLink, Comment
 from django.contrib.auth.models import User
 
 # Register your models here.
@@ -21,3 +21,4 @@ admin.site.register(Category)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(About, AboutAdmin)
 admin.site.register(SocialMediaLink)
+admin.site.register(Comment)
