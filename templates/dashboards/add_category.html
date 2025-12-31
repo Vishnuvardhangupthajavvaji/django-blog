@@ -2,7 +2,8 @@
 
 {% block content %}
 {% load crispy_forms_tags %}
-
+    {% if perms.blogs.add_category %}
+    
     <div class="row">
         <!-- Left sidebar -->
         <!-- load side bar here -->
@@ -20,4 +21,8 @@
             <br>
         </div>
     </div>
+        
+    {% else %}
+        <h3><b>You are not allowed to Add Category</b></h3>
+    {% endif %}
 {% endblock %}
