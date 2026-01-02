@@ -36,6 +36,14 @@ def categories(request) :
         messages.warning(request, "You do not have permission to view Categories.")
         return redirect('home')
     
+    if request.user.groups.filter(name='Editor') :
+        categories = Category.objects.filter(author_id=request.user.id)
+        print(f"{categories=}")
+        context = {
+            "categories" : categories,
+        }
+        return render(request, 'dashboards/categories.html', context)
+
     return render(request, 'dashboards/categories.html')
 
 
@@ -48,7 +56,9 @@ def add_category(request) :
     if request.method == 'POST' :
         form = CategoryForm(request.POST)
         if form.is_valid :
-            form.save()
+            cat = form.save(commit=False)
+            cat.author = request.user
+            cat.save()
             messages.success(request, "Category added successfully!.")
             return redirect('categories')
         else :
@@ -70,7 +80,8 @@ def edit_category(request, pk) :
         return redirect('home')
 
     category = get_object_or_404(Category, pk=pk)
-    if request.method == 'POST' :
+    print(f"{category=}")
+    if request.method == 'POST' and request.user.id == category.author_id :
         form = CategoryForm(request.POST, instance=category)
         if form.is_valid() :
             form.save()
@@ -80,9 +91,11 @@ def edit_category(request, pk) :
             print(f"{form.errors=}")
             messages.error(request, str(form.errors))
             return redirect('edit_category')
-    form = CategoryForm(instance=category)
-    print(f"{category=}")
-
+    if request.method == 'GET' and request.user.id == category.author_id :
+        form = CategoryForm(instance=category)
+        
+    else :
+        return redirect('categories')
     context = {
         'form' : form,
         'category' : category,
@@ -97,8 +110,9 @@ def delete_category(request, pk) :
         return redirect('home')
 
     category = get_object_or_404(Category, pk=pk)
-    category.delete()
-    messages.success(request, "Category deleted successfully!.")
+    if request.user.id == category.author_id :
+        category.delete()
+        messages.success(request, "Category deleted successfully!.")
     return redirect('categories')
 
 
@@ -111,8 +125,10 @@ def posts(request) :
         messages.warning(request, "You do not have permission to access dashboard.")
         return redirect('home')
 
-    posts = Blog.objects.order_by('category')
-
+    if request.user.groups.filter(name='Editor') :
+        posts = Blog.objects.filter(author_id=request.user.id)
+    else :
+        posts = Blog.objects.order_by('category')
     context = {
         'posts' : posts,
     }
@@ -128,7 +144,7 @@ def edit_post(request, pk) :
 
     post = get_object_or_404(Blog, pk=pk)
     print(f"{post=}")
-    if request.method == 'POST' :
+    if request.method == 'POST' and request.user.id == post.author_id :
         form = BlogForm(request.POST, request.FILES, instance=post)
         if form.is_valid() :
             post = form.save() 
@@ -141,7 +157,10 @@ def edit_post(request, pk) :
             print(f"{form.errors=}")
             messages.error(request, str(form.errors))
             return redirect('edit_post')
-    form = BlogForm(instance=post)
+    if request.user.id == post.author_id :
+        form = BlogForm(instance=post)
+    else :
+        return redirect('posts')
 
     context = {
         'form' : form,
@@ -157,8 +176,9 @@ def delete_post(request, pk) :
         return redirect('home')
 
     post = get_object_or_404(Blog, pk=pk)
-    post.delete()
-    messages.success(request, "Post deleted successfully!.")
+    if request.user.id == post.author_id :
+        post.delete()
+        messages.success(request, "Post deleted successfully!.")
     return redirect('posts')
 
 
@@ -269,3 +289,5 @@ def edit_user(request, pk) :
     }
 
     return render(request, 'dashboards/edit_user.html', context)
+
+

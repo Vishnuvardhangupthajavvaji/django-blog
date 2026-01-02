@@ -10,32 +10,36 @@
         <div class="col-md-9">
             <h3>All Categories</h3>
             <a href="{% url 'add_category' %}" class="btn btn-dark text-light float-right mb-2">Add New</a>
+        {% if categories %}            
             <table class="table table-hover">
-            <thead>
-                <tr>
-                <th scope="col">S.No</th>
-                <th scope="col">Category Name</th>
-                <th scope="col">Created At</th>
-                <th scope="col">Updated At</th>
-                <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cat in categories %} 
-                <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ cat }}</td>
-                <td>{{ cat.created_at }}</td>
-                <td>{{ cat.updated_at }}</td>
-                <td>
-                    <a href="{% url 'edit_category' cat.id %}"><i class="fa fa-edit text-success"></i></a>
-                    &nbsp;
-                    <a href="{% url 'delete_category' cat.id %}"><i class="fa fa-trash text-danger"></i></a>
-                </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            </table>
+                <thead>
+                    <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Category Name</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Updated At</th>
+                    <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categories %} 
+                    <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ cat }}</td>
+                    <td>{{ cat.created_at }}</td>
+                    <td>{{ cat.updated_at }}</td>
+                    <td>
+                        <a href="{% url 'edit_category' cat.id %}"><i class="fa fa-edit text-success"></i></a>
+                        &nbsp;
+                        <a href="{% url 'delete_category' cat.id %}"><i class="fa fa-trash text-danger"></i></a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            {% else %}
+                <h3>No categories found, Add your first category!!!</h3>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
